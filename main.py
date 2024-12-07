@@ -1,12 +1,19 @@
 import os
 import random
+from round_robin import simulador_round_robin_smp_unitario
 
 class Proceso:
-    def __init__(self, pid, nombre, estado, prioridad):
+    def __init__(self, pid, nombre, estado, prioridad, tiempo_llegada, tiempo_ejecucion):
         self.pid = pid
         self.nombre = nombre
         self.estado = estado
         self.prioridad = int(prioridad)
+        self.tiempo_llegada = tiempo_llegada
+        self.tiempo_ejecucion = tiempo_ejecucion
+        self.tiempo_restante = tiempo_ejecucion
+        self.tiempo_finalizacion = 0
+        self.tiempo_espera = 0
+        self.tiempo_respuesta = -1  # -1 indica que no ha sido atendido aún
 
     def __str__(self):
         return f"PID: {self.pid}, Nombre: {self.nombre}, Estado: {self.estado}, Prioridad: {self.prioridad}"
@@ -26,8 +33,12 @@ def obtener_procesos():
                     stat_data = stat_file.readline().split()
                     estado = stat_data[2]
                     prioridad = stat_data[17]
-                
-                procesos.append(Proceso(pid, nombre, estado, prioridad))
+
+                # Generar valores aleatorios para tiempo_llegada y tiempo_ejecucion
+                tiempo_llegada = random.randint(0, 50)  # Ejemplo: llega en los primeros 50 ticks
+                tiempo_ejecucion = random.randint(1, 20)  # Ejemplo: tiempo de ejecución entre 1 y 20
+
+                procesos.append(Proceso(pid, nombre, estado, prioridad, tiempo_llegada, tiempo_ejecucion))
             except FileNotFoundError:
                 continue
     
@@ -64,29 +75,33 @@ def eliminar_proceso(lista_procesos, pid):
 
     return lista_procesos
 
-#if __name__ == "__main__":
-#    procesos = obtener_procesos()
-#
-#   for proc in procesos:
-#        print(proc)
-
 if __name__ == "__main__":
-    procesos = []
+    procesos = obtener_procesos()
 
-    # Crear 3 procesos simulados
-    for _ in range(3):
-        proceso = crear_proceso_simulado()
-        procesos.append(proceso)
-
-    print("\nProcesos creados:")
     for proc in procesos:
-        print(proc)
+       print(proc)
 
-    # Eliminar el segundo proceso
-    pid_a_eliminar = procesos[1].pid
-    procesos = eliminar_proceso(procesos, pid_a_eliminar)
+# if __name__ == "__main__":
+#     procesos = []
+#
+#     # Crear 3 procesos simulados
+#     for _ in range(3):
+#         proceso = crear_proceso_simulado()
+#         procesos.append(proceso)
+#
+#     print("\nProcesos creados:")
+#     for proc in procesos:
+#         print(proc)
+#
+#     # Eliminar el segundo proceso
+#     pid_a_eliminar = procesos[1].pid
+#     procesos = eliminar_proceso(procesos, pid_a_eliminar)
+#
+#     print("\nProcesos restantes:")
+#     for proc in procesos:
+#         print(proc)
+#
+quantum = 3
+num_cpus = 4
 
-    print("\nProcesos restantes:")
-    for proc in procesos:
-        print(proc)
-
+simulador_round_robin_smp_unitario(procesos, quantum, num_cpus)
