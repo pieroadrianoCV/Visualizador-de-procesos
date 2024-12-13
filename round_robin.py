@@ -1,32 +1,13 @@
 from collections import deque
 
-def simulador_round_robin_smp_unitario(procesos, quantum, num_cpus):
-    tiempo_actual = 0
-    finalizados = []
-    cola = []
-    cpus = [None] * num_cpus
-    tiempo_restante_cpu = [0] * num_cpus
-    indice_procesos = 0
-    n = len(procesos)
-
-    while len(finalizados) < n or any(cpus) or cola:
-        while indice_procesos < n and procesos[indice_procesos].tiempo_llegada <= tiempo_actual:
-            cola.append(procesos[indice_procesos])
-            indice_procesos += 1
-
-        for i in range(num_cpus):
-            if cpus[i]:
-                tiempo_restante_cpu[i] -= 1
-                cpus[i].tiempo_restant
-
 # Función para simular Round Robin con avance unitario
 def simulador_round_robin_smp_unitario(procesos, quantum, num_cpus):
     tiempo_actual = 0
     cola = deque()  # Cola de procesos listos
     finalizados = []  # Procesos terminados
     indice_procesos = 0
-    n = len(procesos)
-
+    #n = len(procesos)
+    n = 10
     # Inicializar CPUs con estado ocioso
     cpus = [None] * num_cpus  # Cada CPU ejecuta un proceso o está ociosa
     tiempo_restante_cpu = [0] * num_cpus  # Tiempo restante de ejecución en cada CPU
@@ -75,11 +56,12 @@ def simulador_round_robin_smp_unitario(procesos, quantum, num_cpus):
     tiempo_espera_promedio = total_espera / n
     tiempo_respuesta_promedio = total_respuesta / n
 
-    # Mostrar resultados
+        # Mostrar resultados
+    finalizados.sort(key=lambda proceso: int(proceso.pid))
     print("\nResultados de la simulación:")
-    print(f"{'Proceso':<10}{'Llegada':<10}{'Ejecución':<10}{'Finalización':<15}{'Espera':<10}{'Respuesta':<10}")
+    print(f"{'Proceso':<10}{'Nombre':<40}{'Llegada':<10}{'Ejecución':<10}{'Finalización':<15}{'Espera':<10}{'Respuesta':<10}")
     for p in finalizados:
-        print(f"{p.pid:<10}{p.tiempo_llegada:<10}{p.tiempo_ejecucion:<10}{p.tiempo_finalizacion:<15}{p.tiempo_espera:<10}{p.tiempo_respuesta:<10}")
+        print(f"{p.pid:<10}{p.nombre:<40}{p.tiempo_llegada:<10}{p.tiempo_ejecucion:<10}{p.tiempo_finalizacion:<15}{p.tiempo_espera:<10}{p.tiempo_respuesta:<10}")
 
     print(f"\nTiempo de espera promedio: {tiempo_espera_promedio:.2f}")
     print(f"Tiempo de respuesta promedio: {tiempo_respuesta_promedio:.2f}")
