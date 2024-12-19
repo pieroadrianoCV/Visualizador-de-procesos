@@ -91,7 +91,7 @@ def graficar_gantt_progresivo_en_ventana(gantt_chart, num_cpus, fig, ax):
     plt.pause(0.1)  # Pausa para que la animación sea visible
 
 
-def simulador_prioridad(procesos, num_cpus):
+def simulador_prioridad(procesos,quantum, num_cpus):
     tiempo_actual = 0
     cola = []  # Cola de procesos listos, ordenada por prioridad
     finalizados = []  # Procesos terminados
